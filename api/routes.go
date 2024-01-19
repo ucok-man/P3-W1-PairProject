@@ -35,6 +35,7 @@ func (app *Application) routes() http.Handler {
 		transactions.GET("/:id", app.transactionGetByIdHandler)
 		transactions.PUT("/:id", app.transactionUpdateHandler)
 		transactions.DELETE("/:id", app.transactionDeleteHandler)
+		transactions.DELETE("/delete/all", app.transactionDeleteAllHandler)
 	}
 
 	return router

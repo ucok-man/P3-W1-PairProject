@@ -125,3 +125,12 @@ func (app *Application) transactionDeleteHandler(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, res)
 }
+
+func (app *Application) transactionDeleteAllHandler(ctx echo.Context) error {
+	res, err := app.repo.Transaction.DeleteAll(ctx.Request().Context())
+	if err != nil {
+		return app.ErrInternalServer(ctx, err)
+	}
+
+	return ctx.JSON(http.StatusOK, res)
+}

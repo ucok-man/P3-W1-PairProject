@@ -60,6 +60,15 @@ func (s *TransactionService) Delete(ctx context.Context, req entity.Transaction)
 	return res, nil
 }
 
+func (s *TransactionService) DeleteAll(ctx context.Context) (*mongo.DeleteResult, error) {
+	res, err := s.coll.DeleteMany(ctx, bson.M{})
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
+}
+
 func (s *TransactionService) Insert(ctx context.Context, input *entity.Transaction) error {
 	result, err := s.coll.InsertOne(ctx, input)
 	if err != nil {
