@@ -21,17 +21,11 @@ func (app *Application) routes() http.Handler {
 
 	router.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	users := root.Group("/users")
-	{
-		users.POST("/register", app.userRegisterHandler)
-		users.POST("/login", app.userLoginHandler)
-	}
-
-	messages := root.Group("/messages")
-	messages.Use(app.withLogin)
-	{
-		messages.POST("", app.messageCreateHandler)
-	}
+	// users := root.Group("/users")
+	// {
+	// 	users.POST("/register", app.userRegisterHandler)
+	// 	users.POST("/login", app.userLoginHandler)
+	// }
 
 	return router
 }

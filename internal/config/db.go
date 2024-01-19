@@ -2,40 +2,37 @@ package config
 
 import (
 	"context"
-	"fmt"
 	"time"
 
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-func OpenDB(cfg *Config) (*gorm.DB, error) {
-	db, err := gorm.Open(postgres.Open(cfg.Db.DSN))
+func OpenDB(cfg *Config) (*mongo.Client, error) {
+	duration, err := time.ParseDuration(cfg.Db.MaxIdleTime)
 	if err != nil {
 		return nil, err
 	}
 
-	sqldb, err := db.DB()
+	opts := options.Client().
+		ApplyURI(cfg.Db.DSN).
+		SetServerAPIOptions(options.ServerAPI(options.ServerAPIVersion1)).
+		SetMaxPoolSize(uint64(cfg.Db.MaxIdleConn)).
+		SetMinPoolSize(1).
+		SetMaxConnIdleTime(duration)
+
+	client, err := mongo.Connect(context.TODO(), opts)
 	if err != nil {
 		return nil, err
 	}
 
-	sqldb.SetMaxOpenConns(cfg.Db.MaxOpenConn)
-	sqldb.SetMaxIdleConns(cfg.Db.MaxIdleConn)
+	ctx, cleanup := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cleanup()
 
-	idletime, err := time.ParseDuration(cfg.Db.MaxIdleTime)
-	if err != nil {
-		return nil, fmt.Errorf("failed parsing maxidletime: %v", err)
-	}
-	sqldb.SetConnMaxIdleTime(idletime)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	err = sqldb.PingContext(ctx)
-	if err != nil {
+	if err := client.Ping(ctx, readpref.Nearest()); err != nil {
 		return nil, err
 	}
 
-	return db, nil
+	return client, err
 }

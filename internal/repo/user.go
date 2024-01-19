@@ -1,56 +1,80 @@
 package repo
 
 import (
-	"errors"
-	"strings"
+	"context"
+	"fmt"
 
-	"github.com/ucok-man/P3-W1-PairProject/internal/entity"
-	"gorm.io/gorm"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type UserService struct {
-	db *gorm.DB
+	coll *mongo.Collection
 }
 
-func (s *UserService) GetByEmail(email string) (*entity.User, error) {
-	User := entity.User{}
-
-	err := s.db.Where("email = $1", email).First(&User).Error
-	if err != nil {
-		switch {
-		case errors.Is(err, gorm.ErrRecordNotFound):
-			return nil, ErrRecordNotFound
-		default:
-			return nil, err
-		}
+func (s *UserService) setup() {
+	indexmodel := mongo.IndexModel{
+		Keys:    bson.D{{"email", -1}},
+		Options: options.Index().SetUnique(true),
 	}
-	return &User, nil
-}
 
-func (s *UserService) GetByID(id int) (*entity.User, error) {
-	User := entity.User{}
-
-	err := s.db.Where("user_id = $1", id).First(&User).Error
-	if err != nil {
-		switch {
-		case errors.Is(err, gorm.ErrRecordNotFound):
-			return nil, ErrRecordNotFound
-		default:
-			return nil, err
-		}
+	if _, err := s.coll.Indexes().CreateOne(context.Background(), indexmodel); err != nil {
+		panic(fmt.Sprintf("[repo.setup()] ERROR setup index: %v\n", err))
 	}
-	return &User, nil
 }
 
-func (s *UserService) Insert(User *entity.User) error {
-	err := s.db.Create(User).Error
-	if err != nil {
-		switch {
-		case strings.Contains(err.Error(), "duplicate key value violates unique constraint"):
-			return ErrDuplicateRecord
-		default:
-			return err
-		}
-	}
-	return nil
-}
+// func (s *UserService) GetByEmail(email string) (*entity.User, error) {
+// 	// User := entity.User{}
+
+// 	// err := s.db.Where("email = $1", email).First(&User).Error
+// 	// if err != nil {
+// 	// 	switch {
+// 	// 	case errors.Is(err, gorm.ErrRecordNotFound):
+// 	// 		return nil, ErrRecordNotFound
+// 	// 	default:
+// 	// 		return nil, err
+// 	// 	}
+// 	// }
+// 	// return &User, nil
+
+// 	return nil, nil
+// }
+
+// func (s *UserService) GetByID(id int) (*entity.User, error) {
+// 	// User := entity.User{}
+
+// 	// err := s.db.Where("user_id = $1", id).First(&User).Error
+// 	// if err != nil {
+// 	// 	switch {
+// 	// 	case errors.Is(err, gorm.ErrRecordNotFound):
+// 	// 		return nil, ErrRecordNotFound
+// 	// 	default:
+// 	// 		return nil, err
+// 	// 	}
+// 	// }
+// 	// return &User, nil
+// 	return nil, nil
+// }
+
+// func (s *UserService) Insert(user *entity.User) (primitive.ObjectID, error) {
+// 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+// 	defer cancel()
+
+// 	result, err := s.coll.InsertOne(ctx, user)
+// 	if err != nil {
+// 		switch {
+// 		case mongo.IsDuplicateKeyError(err):
+// 			return primitive.ObjectID{}, ErrDuplicateRecord
+// 		default:
+// 			return primitive.ObjectID{}, err
+// 		}
+// 	}
+
+// 	objid, ok := result.InsertedID.(primitive.ObjectID)
+// 	if !ok {
+// 		return primitive.ObjectID{}, fmt.Errorf("id returned from driver is not object id: %v", err)
+// 	}
+
+// 	return objid, nil
+// }

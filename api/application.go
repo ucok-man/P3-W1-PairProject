@@ -25,7 +25,7 @@ func New() *Application {
 		logger.Fatal(err, "failed config initialization", nil)
 	}
 
-	dbconn, err := config.OpenDB(cfg)
+	mongoclient, err := config.OpenDB(cfg)
 	if err != nil {
 		logger.Fatal(err, "failed open db connection", nil)
 	}
@@ -34,7 +34,7 @@ func New() *Application {
 	app := &Application{
 		logger: logger,
 		config: cfg,
-		repo:   repo.New(dbconn),
+		repo:   repo.New(mongoclient.Database(cfg.Db.DBName)).InitSetup(),
 		ctxkey: struct {
 			user string
 		}{

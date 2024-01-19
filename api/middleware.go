@@ -1,15 +1,11 @@
 package api
 
 import (
-	"errors"
 	"net/http"
-	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/ucok-man/P3-W1-PairProject/internal/jwt"
 	"github.com/ucok-man/P3-W1-PairProject/internal/logging"
-	"github.com/ucok-man/P3-W1-PairProject/internal/repo"
 )
 
 func (app *Application) withRecover() echo.MiddlewareFunc {
@@ -61,37 +57,37 @@ func (app *Application) withLogger() echo.MiddlewareFunc {
 	})
 }
 
-func (app *Application) withLogin(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(ctx echo.Context) error {
-		authorizationHeader := ctx.Request().Header.Get("Authorization")
-		if authorizationHeader == "" {
-			return app.ErrInvalidAuthenticationToken(ctx)
-		}
+// func (app *Application) withLogin(next echo.HandlerFunc) echo.HandlerFunc {
+// 	return func(ctx echo.Context) error {
+// 		authorizationHeader := ctx.Request().Header.Get("Authorization")
+// 		if authorizationHeader == "" {
+// 			return app.ErrInvalidAuthenticationToken(ctx)
+// 		}
 
-		headerParts := strings.Split(authorizationHeader, " ")
-		if len(headerParts) != 2 || headerParts[0] != "Bearer" {
-			return app.ErrInvalidAuthenticationToken(ctx)
-		}
-		tokenstr := headerParts[1]
+// 		headerParts := strings.Split(authorizationHeader, " ")
+// 		if len(headerParts) != 2 || headerParts[0] != "Bearer" {
+// 			return app.ErrInvalidAuthenticationToken(ctx)
+// 		}
+// 		tokenstr := headerParts[1]
 
-		var claim jwt.JWTClaim
-		err := jwt.DecodeToken(tokenstr, &claim, app.config.Jwt.Secret)
-		if err != nil {
-			return app.ErrInvalidAuthenticationToken(ctx)
-		}
+// 		var claim jwt.JWTClaim
+// 		err := jwt.DecodeToken(tokenstr, &claim, app.config.Jwt.Secret)
+// 		if err != nil {
+// 			return app.ErrInvalidAuthenticationToken(ctx)
+// 		}
 
-		user, err := app.repo.User.GetByID(claim.UserID)
-		if err != nil {
-			switch {
-			case errors.Is(err, repo.ErrRecordNotFound):
-				return app.ErrInvalidAuthenticationToken(ctx)
-			default:
-				return app.ErrInternalServer(ctx, err)
-			}
-		}
+// 		user, err := app.repo.User.GetByID(claim.UserID)
+// 		if err != nil {
+// 			switch {
+// 			case errors.Is(err, repo.ErrRecordNotFound):
+// 				return app.ErrInvalidAuthenticationToken(ctx)
+// 			default:
+// 				return app.ErrInternalServer(ctx, err)
+// 			}
+// 		}
 
-		// set context
-		ctx.Set(app.ctxkey.user, user)
-		return next(ctx)
-	}
-}
+// 		// set context
+// 		ctx.Set(app.ctxkey.user, user)
+// 		return next(ctx)
+// 	}
+// }

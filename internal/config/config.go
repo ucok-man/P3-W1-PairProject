@@ -15,6 +15,7 @@ func init() {
 
 type dbcfg struct {
 	DSN         string `mapstructure:"DB_DSN"`
+	DBName      string `mapstructure:"DB_NAME"`
 	MaxOpenConn int    `mapstructure:"DB_MAX_OPEN_CONN"`
 	MaxIdleConn int    `mapstructure:"DB_MAX_IDLE_CONN"`
 	MaxIdleTime string `mapstructure:"DB_MAX_IDLE_TIME"`
