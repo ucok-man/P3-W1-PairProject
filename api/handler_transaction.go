@@ -80,29 +80,6 @@ func (app *Application) transactionGetByIdHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusCreated, response)
 }
 
-func (app *Application) transactionCreateHandler(ctx echo.Context) error {
-	var input contract.ReqTransactionCreate
-	if err := ctx.Bind(&input); err != nil {
-		return app.ErrBadRequest(ctx, err)
-	}
-
-	if err := ctx.Validate(&input); err != nil {
-		return app.ErrFailedValidation(ctx, err)
-	}
-
-	var transaction entity.Transaction
-	if err := copier.Copy(&transaction, &input); err != nil {
-		return app.ErrInternalServer(ctx, err)
-	}
-
-	res, err := app.repo.Transaction.Create(ctx.Request().Context(), transaction)
-	if err != nil {
-		return app.ErrInternalServer(ctx, err)
-	}
-
-	return ctx.JSON(http.StatusOK, res)
-}
-
 func (app *Application) transactionUpdateHandler(ctx echo.Context) error {
 	var input contract.ReqTransactionUpdate
 	if err := ctx.Bind(&input); err != nil {
