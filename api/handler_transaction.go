@@ -127,10 +127,10 @@ func (app *Application) transactionDeleteHandler(ctx echo.Context) error {
 }
 
 func (app *Application) transactionDeleteAllHandler(ctx echo.Context) error {
-	res, err := app.repo.Transaction.DeleteAll(ctx.Request().Context())
+	_, err := app.repo.Transaction.DeleteAll(ctx.Request().Context())
 	if err != nil {
 		return app.ErrInternalServer(ctx, err)
 	}
 
-	return ctx.JSON(http.StatusOK, res)
+	return ctx.JSON(http.StatusOK, echo.Map{"message": "success"})
 }
