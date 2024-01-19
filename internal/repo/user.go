@@ -1,28 +1,23 @@
 package repo
 
 import (
-	"context"
-	"fmt"
-
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"gopkg.in/mgo.v2/bson"
 )
 
 type UserService struct {
 	coll *mongo.Collection
 }
 
-func (s *UserService) setup() {
-	indexmodel := mongo.IndexModel{
-		Keys:    bson.D{{"email", -1}},
-		Options: options.Index().SetUnique(true),
-	}
+// func (s *UserService) setup() {
+// 	indexmodel := mongo.IndexModel{
+// 		Keys:    bson.D{{"email", -1}},
+// 		Options: options.Index().SetUnique(true),
+// 	}
 
-	if _, err := s.coll.Indexes().CreateOne(context.Background(), indexmodel); err != nil {
-		panic(fmt.Sprintf("[repo.setup()] ERROR setup index: %v\n", err))
-	}
-}
+// 	if _, err := s.coll.Indexes().CreateOne(context.Background(), indexmodel); err != nil {
+// 		panic(fmt.Sprintf("[repo.setup()] ERROR setup index: %v\n", err))
+// 	}
+// }
 
 // func (s *UserService) GetByEmail(email string) (*entity.User, error) {
 // 	// User := entity.User{}

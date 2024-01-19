@@ -7,14 +7,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// func (app *Application) getCurrentUser(ctx echo.Context) *entity.User {
-// 	obj := ctx.Get(app.ctxkey.user)
-// 	user, ok := obj.(*entity.User)
-// 	if !ok {
-// 		panic("[app.getCurrentUser]: user should be *entity.User")
-// 	}
-// 	return user
-// }
 
 func (app *Application) getParamId(ctx echo.Context) (primitive.ObjectID, error) {
 	objid, err := primitive.ObjectIDFromHex(ctx.Param("id"))

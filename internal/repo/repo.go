@@ -24,7 +24,7 @@ func New(db *mongo.Database) *Services {
 }
 
 func (r *Services) InitSetup() *Services {
-	r.User.setup()
-	r.Transaction.setup()
+	// r.User.setup()
+	// r.Transaction.setup()
 	return r
 }
