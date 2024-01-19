@@ -15,11 +15,11 @@ func (app *Application) routes() http.Handler {
 	router.JSONSerializer = serializer.JSONSerializer{}
 	router.Validator = validator.New()
 
+	router.GET("/swagger/*", echoSwagger.WrapHandler)
+
 	root := router.Group("/v1")
 	root.Use(app.withRecover())
 	root.Use(app.withLogger())
-
-	router.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// users := root.Group("/users")
 	// {
@@ -30,6 +30,7 @@ func (app *Application) routes() http.Handler {
 	transactions := root.Group("/transactions")
 	{
 		// TODO: yang get masuk sini gan
+		transactions.POST("", app.transactionCreateHandler)
 		transactions.PUT("/:id", app.transactionUpdateHandler)
 		transactions.DELETE("/:id", app.transactionDeleteHandler)
 	}

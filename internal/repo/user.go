@@ -15,7 +15,7 @@ type UserService struct {
 // 	}
 
 // 	if _, err := s.coll.Indexes().CreateOne(context.Background(), indexmodel); err != nil {
-// 		panic(fmt.Sprintf("[repo.setup()] ERROR setup index: %v\n", err))
+// 		panic(fmt.Sprintf("[user.setup()] ERROR setup index: %v\n", err))
 // 	}
 // }
 
