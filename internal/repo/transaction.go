@@ -22,12 +22,27 @@ type TransactionService struct {
 // 	}
 
 // 	if _, err := s.coll.Indexes().CreateOne(context.Background(), indexmodel); err != nil {
-// 		panic(fmt.Sprintf("[repo.setup()] ERROR setup index: %v\n", err))
+// 		panic(fmt.Sprintf("[transaction.setup()] ERROR setup index: %v\n", err))
 // 	}
 // }
 
+func (s *TransactionService) Create(ctx context.Context, req entity.Transaction) (*mongo.InsertOneResult, error) {
+	res, err := s.coll.InsertOne(ctx, req)
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
+}
+
 func (s *TransactionService) Update(ctx context.Context, req entity.Transaction) (*mongo.UpdateResult, error) {
-	res, err := s.coll.UpdateByID(ctx, req.Id, req)
+	update := bson.M{
+		"$set": bson.M{
+			"description": req.Description,
+			"amount":      req.Amount,
+		},
+	}
+	res, err := s.coll.UpdateByID(ctx, req.Id, update)
 	if err != nil {
 		return res, err
 	}
@@ -36,7 +51,8 @@ func (s *TransactionService) Update(ctx context.Context, req entity.Transaction)
 }
 
 func (s *TransactionService) Delete(ctx context.Context, req entity.Transaction) (*mongo.DeleteResult, error) {
-	res, err := s.coll.DeleteOne(ctx, req)
+	filter := bson.M{"_id": req.Id}
+	res, err := s.coll.DeleteOne(ctx, filter)
 	if err != nil {
 		return res, err
 	}
