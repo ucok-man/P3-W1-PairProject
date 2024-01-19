@@ -12,16 +12,19 @@ var (
 )
 
 type Services struct {
-	User UserService
+	User        UserService
+	Transaction TransactionService
 }
 
 func New(db *mongo.Database) *Services {
 	return &Services{
-		User: UserService{coll: db.Collection("user")},
+		User:        UserService{coll: db.Collection("user")},
+		Transaction: TransactionService{coll: db.Collection("transaction")},
 	}
 }
 
 func (r *Services) InitSetup() *Services {
 	r.User.setup()
+	r.Transaction.setup()
 	return r
 }

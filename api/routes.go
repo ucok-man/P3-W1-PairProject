@@ -27,5 +27,12 @@ func (app *Application) routes() http.Handler {
 	// 	users.POST("/login", app.userLoginHandler)
 	// }
 
+	transactions := root.Group("/transactions")
+	{
+		// TODO: yang get masuk sini gan
+		transactions.PUT("/:id", app.transactionUpdateHandler)
+		transactions.DELETE("/:id", app.transactionDeleteHandler)
+	}
+
 	return router
 }
