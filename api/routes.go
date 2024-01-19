@@ -29,8 +29,10 @@ func (app *Application) routes() http.Handler {
 
 	transactions := root.Group("/transactions")
 	{
-		// TODO: yang get masuk sini gan
-		transactions.POST("", app.transactionCreateHandler)
+		// TODO: yang get masuk sini gan: oke gan
+		transactions.POST("", app.transactionInsertHandler)
+		transactions.GET("", app.transactionGetAllHandler)
+		transactions.GET("/:id", app.transactionGetByIdHandler)
 		transactions.PUT("/:id", app.transactionUpdateHandler)
 		transactions.DELETE("/:id", app.transactionDeleteHandler)
 	}

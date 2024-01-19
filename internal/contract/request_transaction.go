@@ -16,3 +16,8 @@ type ReqTransactionUpdate struct {
 type ReqTransactionDelete struct {
 	Id primitive.ObjectID `param:"id" validate:"required"`
 }
+
+type ReqTransactionInsert struct {
+	Description string  `json:"description" validate:"required"`
+	Amount      float64 `json:"amount" validate:"required"`
+}
