@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -52,6 +53,7 @@ func (app *Application) httpErrorHandler(err error, ctx echo.Context) {
 
 func (app *Application) ErrInternalServer(ctx echo.Context, err error) error {
 	message := "the server encountered a problem and could not process your request"
+	log.Println(err)
 	return echo.NewHTTPError(http.StatusInternalServerError, message).SetInternal(err)
 }
 
@@ -95,4 +97,3 @@ func (app *Application) ErrInvalidAuthenticationToken(ctx echo.Context) error {
 	message := "invalid or missing authentication token"
 	return echo.NewHTTPError(http.StatusUnauthorized, message)
 }
-
