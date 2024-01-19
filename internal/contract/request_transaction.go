@@ -9,3 +9,8 @@ type ReqTransactionUpdate struct {
 type ReqTransactionDelete struct {
 	Id string `json:"string" validate:"required"`
 }
+
+type ReqTransactionInsert struct {
+	Description string  `json:"description" validate:"required"`
+	Amount      float64 `json:"amount" validate:"required"`
+}
