@@ -2,28 +2,27 @@ package api
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
-	"github.com/ucok-man/P3-W1-PairProject/internal/entity"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (app *Application) getCurrentUser(ctx echo.Context) *entity.User {
-	obj := ctx.Get(app.ctxkey.user)
-	user, ok := obj.(*entity.User)
-	if !ok {
-		panic("[app.getCurrentUser]: user should be *entity.User")
-	}
-	return user
-}
+// func (app *Application) getCurrentUser(ctx echo.Context) *entity.User {
+// 	obj := ctx.Get(app.ctxkey.user)
+// 	user, ok := obj.(*entity.User)
+// 	if !ok {
+// 		panic("[app.getCurrentUser]: user should be *entity.User")
+// 	}
+// 	return user
+// }
 
-func (app *Application) getParamId(ctx echo.Context) (int, error) {
-	id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
-	if err != nil || id < 1 {
-		return int(0), fmt.Errorf("invalid id parameter")
+func (app *Application) getParamId(ctx echo.Context) (primitive.ObjectID, error) {
+	objid, err := primitive.ObjectIDFromHex(ctx.Param("id"))
+	if err != nil {
+		return primitive.ObjectID{}, err
 	}
 
-	return int(id), nil
+	return objid, nil
 }
 
 func (app *Application) background(fn func()) {
